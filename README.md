@@ -1,5 +1,5 @@
 # martFL
-The official code of ACM CCS 2023 paper "martFL: Enabling Utility-Driven Data Marketplace with a Robust and Verifiable Federated Learning Architecture". [Arxiv](https://arxiv.org/abs/2309.01098)
+The official code of ACM CCS 2023 paper "martFL: Enabling Utility-Driven Data Marketplace with a Robust and Verifiable Federated Learning Architecture". This work features a robust and verifiable Federated Learning architecture, underpinned by a secure model evaluation protocol to remove malicious model updates and a zero-knowledge proving system that ensures fair data trading. [Arxiv](https://arxiv.org/abs/2309.01098)
 
 ![martFL](figure/martFL.png)
 
