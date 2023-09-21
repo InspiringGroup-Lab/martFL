@@ -1,0 +1,85 @@
+const u32 NUM_CLIENT = 4;
+const u32 NUM_RANDOM = 300;
+const u64 MK = 4194304;
+
+def element_aggregate<N>(u64[N] a,u64[N] b,u64 a_z, u64 b_z, u64 res) -> u64 {
+    u64 mut tmp1 = 0;
+    u64 mut tmp2 = 0;
+    u64 mut tmp3 = 0;
+    u64 mut tmp4 = 0;
+    for u32 i in 0..N {
+        tmp1 = tmp1 + a[i] * b[i];
+        tmp2 = tmp2 + a[i] * b_z ;
+        tmp3 = tmp3 + a_z  * b[i];
+        tmp4 = tmp4 + a_z  * b_z ;
+    }
+    u64 ret = tmp1 + tmp4 + res - tmp2 - tmp3;
+    return ret;
+}
+
+def aggregate_remainder<M,N>(u64[N] a,u64[M][N] b,u64 a_z,u64 b_z, u64 c_z, u64 m1) -> (u64[M],u64[M]){
+    u64 res = c_z * MK / m1;
+    u64[M] mut remainder = [0;M];
+    u64[M] mut result = [0;M];
+    for u32 i in 0..M {
+        result[i] = m1 * element_aggregate(a,b[i],a_z,b_z,res);
+        remainder[i] = result[i] % MK;
+    }
+    
+    return (remainder,result);
+}
+
+
+def aggregate<M,N>(u64[N] a,u64[M][N] b, u64[M] c, u64 a_z,u64 b_z, u64 c_z, u64 m1) -> bool{
+    (u64[M],u64[M]) mut r = aggregate_remainder(a,b,a_z,b_z,c_z,m1);
+    
+    bool mut ret = true;
+    for u32 i in 0..M {
+        u64 left = c[i] * MK + r.0[i];
+        u64 right = r.1[i];
+        log("Aggregate: left is {} right is {}",left,right);
+        //assert(left == right);
+        ret = ret && (left == right);
+    } 
+    return ret;
+}
+
+def element_add(u64 x,u64 y,u64 x_z,u64 y_z, u64 z_z, u64 m2, u64 m3) -> u64 {
+    u64 tmp1 = m2 * x;
+    u64 tmp2 = m3 * y;
+    u64 tmp3 = m2 * x_z;
+    u64 tmp4 = m3 * y_z;
+    u64 res = tmp1 + tmp2 + (z_z * MK) - tmp3 - tmp4;
+    return res;
+}
+
+def add_with_remainder<M>(u64[M] x,u64[M] y,u64 x_z, u64 y_z,u64 z_z, u64 m2, u64 m3) -> (u64[M],u64[M]){
+    u64[M] mut remainder = [0;M];
+    u64[M] mut result = [0;M];
+    for u32 i in 0..M {
+        result[i] = element_add(x[i],y[i],x_z,y_z,z_z,m2,m3);
+        remainder[i] = result[i] % MK;
+    }
+    return (remainder,result);
+}
+
+def update<M>(u64[M] x,u64[M] y,u64[M] z,u64 x_z, u64 y_z,u64 z_z, u64 m2, u64 m3) -> bool{
+    (u64[M],u64[M]) mut r = add_with_remainder(x,y,x_z,y_z,z_z,m2,m3);
+    bool mut ret = true;
+    for u32 i in 0..M {
+        u64 left = z[i] * MK + r.0[i];
+        u64 right = r.1[i];
+        log("Update: left is {} right is {}",left,right);
+        //assert(left == right);
+        ret = ret && (left == right);
+    } 
+    return ret;
+}
+
+def main(u64[NUM_CLIENT] a_q, private u64[NUM_RANDOM][NUM_CLIENT] b_q, u64[NUM_RANDOM] c_q,u64 a_z,u64 b_z, u64 c_z, u64 m1, u64[NUM_RANDOM] x_q, u64[NUM_RANDOM] z_q, u64 x_z, u64 z_z, u64 m2, u64 m3) {
+    bool a = aggregate(a_q,b_q,c_q,a_z,b_z,c_z,m1);
+    assert(a);
+    bool b = update(x_q,c_q,z_q,x_z,c_z,z_z,m2,m3);
+    assert(b);
+    return ;
+}
