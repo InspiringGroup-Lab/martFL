@@ -14,7 +14,7 @@ from cluster import gap,kmeans
 from train import evaluate_model,kappa
 from dataset import dataset_output_dim
 from homo_encryption import private_model_evaluation
-path = '/home/lq/project/fedmarket/quantization_params/'
+path = '../quantization_params/'
 epoch = 0
 cpu_device = torch.device('cpu')
 class Aggregator():
