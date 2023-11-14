@@ -3,7 +3,7 @@ import torch
 import shutil
 import threading
 from mythread import MyThread
-MODEL_PATH = '/home/lq/project/fedmarket/models/'
+MODEL_PATH = '../models/'
 
 def get_model_name(cid):
     return 'CModel{}'.format(cid)
