@@ -25,10 +25,11 @@ The script has been tested running under Python 3.7.13. The dependencies are sum
 If you take advantage of martFL in your research, please cite the following in your manuscript:
 
 ```
-@article{li2023martfl,
+@inproceedings{li2023martfl,
   title={martFL: Enabling Utility-Driven Data Marketplace with a Robust and Verifiable Federated Learning Architecture},
   author={Li, Qi and Liu, Zhuotao and Li, Qi and Xu, Ke},
-  journal={arXiv preprint arXiv:2309.01098},
+  booktitle={ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  pages={1496--1510},
   year={2023}
 }
 ```
